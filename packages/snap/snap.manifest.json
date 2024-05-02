@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Ask a question. Any question.",
   "proposedName": "Mystery Fox",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/Montoya/mystery-fox.git"
   },
   "source": {
-    "shasum": "zaec/QzZU0sBLqx8cjYvgCPYFzroEq1L65GZvxr1S4E=",
+    "shasum": "qYGYoTfhOkIJqcPmvqCZPkSEEy75+InlKrUxnWuGjcY=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

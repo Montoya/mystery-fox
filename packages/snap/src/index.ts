@@ -2,6 +2,10 @@ import type { OnHomePageHandler, OnUserInputHandler } from '@metamask/snaps-sdk'
 import { panel, text, spinner, divider, image, form, input, button} from '@metamask/snaps-sdk';
 
 const uiText = {
+  label: { 
+    en: 'Ask the mysterious 🦊 a question:',
+    es: 'Hazle una pregunta al 🦊:'
+  },
   header: { 
     en: 'The Mysterious 🦊 Has Spoken', 
     es: 'El 🦊 Misterioso Dice'
@@ -13,6 +17,14 @@ const uiText = {
   says: { 
     en: 'The fox says:',
     es: 'El zorro respondió:'
+  },
+  query: { 
+    en: 'Query',
+    es: 'Preguntar'
+  },
+  back: { 
+    en: 'Back',
+    es: 'Regresar'
   }
 }; 
 
@@ -114,6 +126,7 @@ export const onHomePage: OnHomePageHandler = async () => {
       ])
     },
   });
+  const locale = await getLocale();
   snap.request({
     method: "snap_updateInterface",
     params: {
@@ -121,12 +134,12 @@ export const onHomePage: OnHomePageHandler = async () => {
       ui: panel([
         input({ 
           name: 'input', 
-          label: 'Ask the mysterious 🦊 a question:' 
+          label: `${uiText.label[locale]}`
         }),
         button({ 
-          value: 'Query', 
+          value: `${uiText.query[locale]}`, 
           buttonType: 'button',
-          name: `btn-ask-${interfaceId}`
+          name: 'btn-ask'
         }),
       ]),
     },
@@ -137,29 +150,59 @@ export const onHomePage: OnHomePageHandler = async () => {
 };
 
 export const onUserInput: OnUserInputHandler = async ({id, event}) => { 
-  if(!event.name?.startsWith('btn-ask-')) return; 
-  const interfaceId = event.name.replace('btn-ask-',''); 
-  const state = await snap.request({
-    method: "snap_getInterfaceState",
-    params: {
-      id: interfaceId,
-    },
-  });
-  const question = state['input']; 
-  if(!question) return; 
-  const locale = await getLocale();
-  const mysteryResponse = answers[Math.floor(Math.random() * answers.length)][locale];
-  await snap.request({
-    method: "snap_updateInterface", 
-    params: { 
-      id: interfaceId,
-      ui: panel([
-        text(`**${uiText.header[locale]}**`),
-        divider(), 
-        text(`${uiText.youasked[locale]} "_${question}_"`),
-        text(uiText.says[locale]),
-        image(`${svgOpener}<text text-anchor="middle" text-align="center" x="155" y="47" font-size="10px" font-family="Euclid Circular B,Roboto,Helvetica,Arial,sans-serif">${mysteryResponse}</text>${svgCloser}`),
-      ]),
-    },
-  }); 
+  let locale; 
+  switch(event.name) { 
+    case 'btn-ask': 
+      const state = await snap.request({
+        method: "snap_getInterfaceState",
+        params: {
+          id,
+        },
+      });
+      const question = state['input']; 
+      if(!question) return; 
+      locale = await getLocale();
+      const mysteryResponse = answers[Math.floor(Math.random() * answers.length)][locale];
+      snap.request({
+        method: "snap_updateInterface", 
+        params: { 
+          id,
+          ui: panel([
+            text(`**${uiText.header[locale]}**`),
+            divider(), 
+            text(`${uiText.youasked[locale]} "_${question}_"`),
+            text(uiText.says[locale]),
+            image(`${svgOpener}<text text-anchor="middle" text-align="center" x="155" y="47" font-size="10px" font-family="Euclid Circular B,Roboto,Helvetica,Arial,sans-serif">${mysteryResponse}</text>${svgCloser}`),
+            button({ 
+              value: `${uiText.back[locale]}`, 
+              buttonType: 'button',
+              name: 'btn-back'
+            }),
+          ]),
+        },
+      }); 
+      break; 
+    case 'btn-back': 
+      locale = await getLocale();
+      snap.request({
+        method: "snap_updateInterface",
+        params: {
+          id,
+          ui: panel([
+            input({ 
+              name: 'input', 
+              label: `${uiText.label[locale]}` 
+            }),
+            button({ 
+              value: `${uiText.query[locale]}`, 
+              buttonType: 'button',
+              name: 'btn-ask'
+            }),
+          ]),
+        },
+      });
+      break; 
+    default: 
+      break; 
+  }
 }; 
