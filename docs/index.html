@@ -18,11 +18,14 @@
         #page { 
           width:480px;
         }
+        #demo { 
+          display:none; 
+        }
         h1 { 
           font-size:1.5rem;
           line-height:64px; 
           padding:0;
-          margin-bottom:32px; 
+          margin-bottom:32px;
         }
         h1 img { 
           vertical-align:top;
@@ -58,10 +61,35 @@
           background-color:rgb(21, 101, 192); 
           border-color:rgb(21, 101, 192); 
         }
+        @media only screen and (min-width: 900px) {
+          #page { 
+            width:900px; 
+          }
+          #demo { 
+            display:block;
+            float:right;
+            margin-left:36px; 
+            width:357px; 
+            height:600px; 
+            overflow:hidden; 
+            border:1px solid #ccc; 
+          }
+          #demo video { 
+            margin-top:-1px; 
+          }
+          h1 { 
+            margin-top:140px; 
+          }
+        }
       </style>
   </head>
   <body>
     <div id="page">
+      <div id="demo">
+        <video width="358" height="601" autoplay loop muted>
+          <source src="demo.mp4" type="video/mp4" />
+        </video>
+      </div>
       <h1><img src="icon.png" width="64" height="64" alt=""> Mystery Fox Snap</h1>
       <p>Ask a question, any question, any time, in MetaMask.</em></p>
       <p id="loading">Loading...</p>
